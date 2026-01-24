@@ -1,0 +1,41 @@
+configuration {
+  show-icons: false;
+  font: "Maple Mono NF Regular 12";
+  kb-row-up: "k";
+  kb-row-down: "j";
+  kb-row-left: "h";
+  kb-row-right: "l";
+}
+
+window {
+    background-color: @background;
+    border:           0;
+    padding:          0;
+    width:            250px;
+    height:           215px;
+    border-radius:    20px;
+}
+
+mainbox {
+  children: [listview];
+}
+
+listview {
+    padding:      0;
+    border-color: @separatorcolor;
+    layout:       vertical;
+    columns: 3;
+    lines: 3;
+    rows: 3;
+}
+
+element {
+    padding: 12px 30px 12px 25px;
+    width: 40px;
+    border-radius:    0px;
+}
+
+element-text {
+  text-align: center;
+  font: "Maple Mono NF Regular 26";
+}
