@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import { Util } from "../utils/util";
+import { Util } from "./utils/util";
 
 const url = process.argv[2];
 const util = new Util();

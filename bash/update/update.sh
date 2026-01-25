@@ -17,7 +17,7 @@ for i in $(seq $start $finish); do
   current_total=$(sed "5!d" "$file" | sed 's/.*: //')
   title=$(sed "2!d" "$file" | sed 's/.*: //')
   if [ -n "$url" ]; then
-    json=$(node $path/.crawler/typescript/dist/update.js "$url")
+    json=$(node $path/.scrafi/typescript/scripts/dist/update.js "$url")
     new_total=$(echo "$json" | jq -r '.total')
     if [[ $current_total != $new_total ]]; then
       sed -i "5s/.*/Total: $new_total/" "$file"

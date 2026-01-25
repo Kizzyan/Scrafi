@@ -1,8 +1,10 @@
 configuration {
   show-icons: false;
   font: "Maple Mono NF Regular 12";
+  kb-row-left: "h";
   kb-row-up: "j";
   kb-row-down: "k";
+  kb-row-right: "l";
 }
 
 window {
