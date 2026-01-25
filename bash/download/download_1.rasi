@@ -1,0 +1,37 @@
+configuration {
+  show-icons: false;
+  font: "Maple Mono NF Regular 12";
+  kb-row-left: "h";
+  kb-row-up: "j";
+  kb-row-down: "k";
+  kb-row-right: "l";
+}
+
+window {
+    background-color: @background;
+    border:           0;
+    padding:          0;
+    width:            153;
+    height:           73px;
+    border-radius:    20px;
+}
+
+mainbox {
+  children: [listview];
+}
+
+listview {
+    padding:      0;
+    border-color: @separatorcolor;
+    layout:       horizontal;
+}
+
+element {
+    padding: 12px 30px 12px 25px;
+    border-radius:    0px;
+}
+
+element-text {
+  text-align: center;
+  font: "Maple Mono NF Regular 26";
+}
