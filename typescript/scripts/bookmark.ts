@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import { Util } from "./utils/util";
+import { Util } from "../utils/util";
 
 /*
  -> Supported Websites:
