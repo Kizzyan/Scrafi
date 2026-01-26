@@ -1,12 +1,19 @@
 #! /bin/sh
 
-export PATH=/usr/local/bin:/usr/bin:/bin
-export DISPLAY=:0
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-path="$ALX_PATH/.scrafi/bash/download/"
+PATH="$HOME/.local/bin:$PATH"
+[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
 
-selected=$(printf "󰇚\n󰧩" | rofi -dmenu -i -theme-str '@import "'$path'/download_1.rasi"')
+# Dependency check
+for cmd in yt-dlp rofi node jq; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Error: $cmd is not installed" >&2
+    exit 1
+  fi
+done
+
+base_path="$ALX_PATH/.scrafi/bash/download"
+
+selected=$(printf "󰇚\n󰧩" | rofi -dmenu -i -theme-str '@import "'$base_path'/download_1.rasi"')
 case "$selected" in
   "󰇚")
     batch=false
@@ -19,7 +26,7 @@ case "$selected" in
     ;;
 esac
 
-url=$(rofi -dmenu -i -p "󰀥 " -theme-str '@import "'$path'/download_2.rasi"')
+url=$(rofi -dmenu -i -p "󰀥 " -theme-str '@import "'$base_path'/download_2.rasi"')
 if [ -n "$url" ]; then
   json=$(node "$ALX_PATH"/.scrafi/typescript/scripts/dist/download.js "$url" $batch)
   if $batch; then
@@ -51,8 +58,11 @@ if [ -n "$url" ]; then
   if $batch; then
     echo "$albums" | jq -r '.[] | [.name, .url, .year] | @tsv' | while IFS=$'\t' read -r albumName albumUrl albumYear; do
     download "$artist" "$albumName" "$albumYear" "https://music.youtube.com/$albumUrl"
+    sleep 2
   done
 else
   download "$artist" "$album" "$year" "$url"
   fi
 fi
+
+notify-send "All downloads finished!"

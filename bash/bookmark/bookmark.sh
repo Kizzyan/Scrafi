@@ -1,10 +1,7 @@
 #! /bin/sh
 
-export PATH=/usr/local/bin:/usr/bin:/bin
-export DISPLAY=:0
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-path="$ALX_PATH"
+PATH="$HOME/.local/bin:$PATH"
+[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
 
 define_placeholder() {
   placeholder="$1"
