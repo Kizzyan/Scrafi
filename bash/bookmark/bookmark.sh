@@ -3,6 +3,8 @@
 PATH="$HOME/.local/bin:$PATH"
 [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
 
+base_path="$ALX_PATH/.scrafi/bash/bookmark"
+
 define_placeholder() {
   placeholder="$1"
   echo "window {height: 65px; width: 20%; border-radius: 20px;} entry { placeholder: \"$placeholder\"; }"
@@ -16,12 +18,39 @@ if [ -n "$url" ]; then
   img_url=$(echo "$json" | jq -r '.img')
   total=$(echo "$json" | jq -r '.total')
   category=$(echo "$json" | jq -r '.category')
-  # domain=$(echo "$json" | jq -r '.domain')
   year=$(echo "$json" | jq -r '.year')
   cleaned_title=$(echo "$json" | jq -r '.imgName')
   img_title=$([ -z "$img_url" ] && echo "AO3_logo.png" || echo "${cleaned_title}.jpg")
   comment=$(rofi -dmenu -i -p "󰅺 " -theme-str "$(define_placeholder 'Add a comment')")
   declare -a tags=($(echo "$json" | jq -r '.tags | @sh' | tr -d \'))
+fi
+
+selected=$(printf "󰡫\n󰴄" | rofi -dmenu -i -theme-str '@import "'$base_path'/bookmark_1.rasi"')
+case "$selected" in
+  "󰡫")
+    finished=false
+    ;;
+  "󰴄")
+    finished=true
+    ;;
+  *)
+    exit 1
+    ;;
+esac
+
+if $finished; then
+  finished_date=$(rofi -dmenu -i -p " " -theme-str "$(define_placeholder 'Add finish date')")
+  status="Finished"
+  if [ "$finished_date" = "today" ]; then
+    completed=$(date +"%Y-%m-%d")
+  else
+    completed="${finished_date}"
+  fi
+  current=$total
+else
+  status="Not Started"
+  completed=""
+  current=0
 fi
 
 base_filename="$ALX_PATH/Notes/$(echo "$title" | sed -r 's/[\/]+/ /g') (${year}).md"
@@ -39,11 +68,11 @@ Creator: "${creator}"
 Year: ${year}
 Link: "${url}"
 Total: ${total}
-Curent: 0
+Curent: ${current}
 Comment: "${comment}"
 Drop:
-Status: Not Started
-Completed:
+Status: ${status}
+Completed: ${completed}
 Image: "[[${img_title}]]"
 Category: ${category}
 tags:
