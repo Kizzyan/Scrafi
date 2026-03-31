@@ -66,7 +66,14 @@ const getInfo = async () => {
       title = `${title} (Manga)`
       tags = await page.evaluate(() => {
         const tagElements = document.querySelectorAll("section.hidden:nth-child(5) > ul:nth-child(1) > li:nth-child(2) > span > a");
-        return Array.from(tagElements).map(element => element.textContent?.trim().replace(" ", "") || '');
+        return Array.from(tagElements).map(element => element.textContent
+          ?.trim()
+          .split(" ")
+          .map(word => word[0].toUpperCase() + word.slice(1, word.length))
+          .concat()
+          .toString()
+          .replaceAll(",", "")
+          .replace("Girls'Love", "Yuri") || '');
       });
       year = +yearStr
       imgName = util.createImgName(title, category, year);
@@ -86,7 +93,14 @@ const getInfo = async () => {
       title = `${title} (Manga)`
       tags = await page.evaluate(() => {
         const tagElements = document.querySelectorAll("div.mb-2:nth-child(3) > div:nth-child(2) > a > span");
-        return Array.from(tagElements).map(element => element.textContent?.trim().replace(" ", "") || '');
+        return Array.from(tagElements).map(element => element.textContent
+          ?.trim()
+          .split(" ")
+          .map(word => word[0].toUpperCase() + word.slice(1, word.length))
+          .concat()
+          .toString()
+          .replaceAll(",", "")
+          .replace("Girls'Love", "Yuri") || '');
       });
       year = +(yearStr.match(/(?<=\ )[0-9]+(?! ,)/)?.toString() || "")
       imgName = util.createImgName(title, category, year);
@@ -136,7 +150,7 @@ const getInfo = async () => {
       domain = "Letterboxd"
       await page.waitForSelector("section.poster-list > div:nth-child(1) > div:nth-child(1) > img:nth-child(1)", { visible: true });
       title = await page.evaluate(() => document.querySelector("div.details > h1.primaryname > span.name")?.textContent) || "";
-      creator = await page.evaluate(() => document.querySelector("span.creatorlist > a > span")?.textContent) || "";
+      creator = await page.evaluate(() => document.querySelector(".contributor > span:nth-child(1)")?.textContent) || "";
       img = "empty-poster";
       while (img.includes("empty-poster")) {
         img = await page.evaluate(() => (document.querySelector("section.poster-list > div:nth-child(1) > div:nth-child(1) > img:nth-child(1)") as HTMLImageElement)?.src);
