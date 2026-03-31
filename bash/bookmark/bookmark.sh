@@ -3,7 +3,7 @@
 PATH="$HOME/.local/bin:$PATH"
 [ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
 
-base_path="$ALX_PATH/.scrafi/bash/bookmark"
+base_path="$HOME/.scrafi/bash/bookmark"
 
 define_placeholder() {
   placeholder="$1"
@@ -12,7 +12,7 @@ define_placeholder() {
 
 url=$(rofi -dmenu -i -p "󰃀 " -theme-str "$(define_placeholder 'Add Bookmark')")
 if [ -n "$url" ]; then
-  json=$(node $ALX_PATH/.scrafi/typescript/scripts/dist/bookmark.js "$url")
+  json=$(node $HOME/.scrafi/typescript/scripts/dist/bookmark.js "$url")
   title=$(echo "$json" | jq -r '.title')
   creator=$(echo "$json" | jq -r '.creator')
   img_url=$(echo "$json" | jq -r '.img')

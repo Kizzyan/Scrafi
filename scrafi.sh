@@ -3,7 +3,7 @@
 export PATH=/usr/local/bin:/usr/bin:/bin
 export DISPLAY=:0
 
-base_path=$ALX_PATH/.scrafi
+base_path=$HOME/.scrafi
 selected=$(printf "󰜏\n󰸕\n󰚰\n󰦗" | rofi -dmenu -i -theme-str '@import "'$base_path'/select.rasi"')
 
 case "$selected" in

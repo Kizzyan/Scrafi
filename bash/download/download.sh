@@ -11,7 +11,7 @@ for cmd in yt-dlp rofi node jq; do
   fi
 done
 
-base_path="$ALX_PATH/.scrafi/bash/download"
+base_path="$HOME/.scrafi/bash/download"
 
 selected=$(printf "󰇚\n󰧩" | rofi -dmenu -i -theme-str '@import "'$base_path'/download_1.rasi"')
 case "$selected" in
@@ -28,7 +28,7 @@ esac
 
 url=$(rofi -dmenu -i -p "󰀥 " -theme-str '@import "'$base_path'/download_2.rasi"')
 if [ -n "$url" ]; then
-  json=$(node "$ALX_PATH"/.scrafi/typescript/scripts/dist/download.js "$url" $batch)
+  json=$(node "$HOME"/.scrafi/typescript/scripts/dist/download.js "$url" $batch)
   if $batch; then
     artist=$(echo "$json" | jq -r '.artistName')
     albums=$(echo "$json" | jq -r '.albums')
@@ -40,18 +40,22 @@ if [ -n "$url" ]; then
 fi
 
 download () {
-  if [ ! -d "$DOWNLOAD_PATH/$1" ]; then
-    cd "$DOWNLOAD_PATH" || return
-    mkdir "$1"
-    cd "$1" || return
-    mkdir "$2"
-    cd "$2" || return
-  else
-    cd "$DOWNLOAD_PATH/$1" || return
-    mkdir "$2"
-    cd "$2" || return
-  fi
-  yt-dlp -f bestaudio -x --audio-format mp3 --audio-quality 320k --parse-metadata "playlist_index:%(track_number)s" --add-metadata --postprocessor-args "ffmpeg:-metadata year=$3 -metadata date=$3 -metadata TYER=$3 -id3v2_version 3" "$4"
+  local target_dir="$DOWNLOAD_PATH/$1/$2"
+  mkdir -p "$target_dir"
+  cd "$target_dir" || return
+
+  yt-dlp -f bestaudio -x \
+    --cookies /media/extra/Music/cookies.txt \
+    --js-runtimes node \
+    --remote-components ejs:github \
+    --audio-format mp3 \
+    --audio-quality 320k \
+    --parse-metadata "playlist_index:%(track_number)s" \
+    --add-metadata \
+    --postprocessor-args "ffmpeg:-metadata year=$3 -metadata date=$3 -metadata TYER=$3 -id3v2_version 3" \
+    "$4"
+
+  beet import -q "$target_dir"
 }
 
 if [ -n "$url" ]; then

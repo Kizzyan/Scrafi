@@ -1,6 +1,6 @@
 #! /bin/sh
 
-path="$ALX_PATH/.scrafi/bash/search/"
+path="$HOME/.scrafi/bash/search/"
 selected=$(printf "󰇥\n󰥷\n󰖬\n󰗃\n\n\n󰿏\n󰵻\n\n\n󰀥\n\n\n\n󰬉\n󰒚\n\n" | rofi -dmenu -i -theme-str '@import "'$path'/search_2.rasi"')
 
 case "$selected" in
