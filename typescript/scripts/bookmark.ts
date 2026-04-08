@@ -13,6 +13,7 @@ import { Util } from "./utils/util";
   • AO3 (fanfic)
   • IMDB (series/movies)
   • AlbumOfTheYear (albums)
+  • Last.fm (albums)
 */
 
 const url = process.argv[2];
@@ -73,7 +74,8 @@ const getInfo = async () => {
           .concat()
           .toString()
           .replaceAll(",", "")
-          .replace("Girls'Love", "Yuri") || '');
+          .replaceAll("ScienceFiction", "Sci-fi")
+          .replace("ShoujoAi", "Yuri") || '');
       });
       year = +yearStr
       imgName = util.createImgName(title, category, year);
@@ -100,6 +102,7 @@ const getInfo = async () => {
           .concat()
           .toString()
           .replaceAll(",", "")
+          .replaceAll("ScienceFiction", "Sci-fi")
           .replace("Girls'Love", "Yuri") || '');
       });
       year = +(yearStr.match(/(?<=\ )[0-9]+(?! ,)/)?.toString() || "")
@@ -136,7 +139,10 @@ const getInfo = async () => {
       let yearStr = await page.evaluate(() => document.querySelector(".FeaturedDetails > p:nth-child(2)")?.textContent) || "";
       tags = await page.evaluate(() => {
         const tagElements = document.querySelectorAll("#__next > div.PageFrame.PageFrame--siteHeaderBanner > main > div.BookPage__gridContainer > div.BookPage__rightColumn > div.BookPage__mainContent > div.BookPageMetadataSection > div.BookPageMetadataSection__genres > ul > span:nth-child(1) > span > a > span");
-        return Array.from(tagElements).map(element => element.textContent?.trim().replace(" ", "") || '');
+        return Array.from(tagElements).map(element => element.textContent
+          ?.trim()
+          .replaceAll(" ", "")
+          .replaceAll("ScienceFiction", "Sci-fi") || '');
       });
 
       category = "Book";
@@ -159,7 +165,10 @@ const getInfo = async () => {
       total = await page.evaluate(() => document.querySelector(".text-link")?.textContent) || "";
       tags = await page.evaluate(() => {
         const tagElements = document.querySelectorAll("div.capitalize:nth-child(2) > p:nth-child(1) > a");
-        return Array.from(tagElements).map(element => element.textContent?.trim().replace(" ", "") || '');
+        return Array.from(tagElements).map(element => element.textContent
+          ?.trim()
+          .replaceAll(" ", "")
+          .replaceAll("ScienceFiction", "Sci-fi") || '');
       });
 
       category = "Movie";
@@ -205,7 +214,10 @@ const getInfo = async () => {
       let yearStr = await util.getDivBelow("Released", page, domain);
       tags = await page.evaluate(() => {
         const tagElements = document.querySelectorAll("#game-body > div:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > span > a");
-        return Array.from(tagElements).map(element => element.textContent?.trim().replace(" ", "") || '');
+        return Array.from(tagElements).map(element => element.textContent
+          ?.trim()
+          .replaceAll(" ", "")
+          .replaceAll("ScienceFiction", "Sci-fi") || '');
       });
 
       category = "Game";
@@ -231,7 +243,7 @@ const getInfo = async () => {
       });
 
       category = "Anime";
-      tags = genres.filter(genre => genre.length > 0);
+      tags = genres.filter(genre => genre.length > 0).map(tag => tag.replaceAll("ScienceFiction", "Sci-fi"));
       creator = creator.replaceAll("\t", "").replaceAll("\n", "");
       title = `${title} (Anime)`
       year = +(yearStr.match(/(?<=, )[0-9]+/)?.toString() || "")
@@ -250,7 +262,11 @@ const getInfo = async () => {
       let yearStr = await page.evaluate(() => document.querySelector(".release_date")?.textContent) || "";
       tags = await page.evaluate(() => {
         const tagElements = document.querySelectorAll(".genres > a");
-        return Array.from(tagElements).map(element => element.textContent?.trim().replaceAll(" ", "").replace("&", "_") || '');
+        return Array.from(tagElements).map(element => element.textContent
+          ?.trim()
+          .replaceAll(" ", "")
+          .replaceAll("ScienceFiction", "Sci-fi")
+          .replace("&", "_") || '');
       });
 
       category = util.checkForSubstring(title, "kamen") ? "Tokusatsu" : "Series";
@@ -270,7 +286,11 @@ const getInfo = async () => {
       let yearStr = await page.evaluate(() => document.querySelector("ul.ipc-inline-list--show-dividers:nth-child(2) > li:nth-child(2) > a:nth-child(1)")?.textContent) || "";
       tags = await page.evaluate(() => {
         const tagElements = document.querySelectorAll("a.ipc-chip > span:nth-child(1)");
-        return Array.from(tagElements).map(element => element.textContent?.trim().replaceAll(" ", "").replace("&", "_") || '');
+        return Array.from(tagElements).map(element => element.textContent
+          ?.trim()
+          .replaceAll(" ", "")
+          .replaceAll("ScienceFiction", "Sci-fi")
+          .replace("&", "_") || '');
       });
 
       category = util.checkForSubstring(title, "kamen") ? "Tokusatsu" : "Series";
@@ -282,6 +302,27 @@ const getInfo = async () => {
     } else if (url.includes("albumoftheyear")) {
 
       domain = "AOTY"
+      await page.waitForSelector(".showImage > img:nth-child(1)", { visible: true });
+      title = await page.evaluate(() => document.querySelector("h1.albumTitle > span:nth-child(1)")?.textContent?.trim()) || "";
+      creator = await page.evaluate(() => document.querySelector(".artist > span:nth-child(1) > span:nth-child(1) > a:nth-child(1)")?.textContent) || "";
+      img = await page.evaluate(() => (document.querySelector(".showImage > img:nth-child(1)") as HTMLImageElement)?.src);
+      total = await page.evaluate(() => document.querySelector(".totalLength")?.textContent) || "";
+      let yearStr = await page.evaluate(() => document.querySelector("div.detailRow:nth-child(2) > a:nth-child(2)")?.textContent) || "";
+      tags = await page.evaluate(() => {
+        const tagElements = document.querySelectorAll("div.detailRow:nth-child(5) > a");
+        return Array.from(tagElements).map(element => element.textContent?.trim().replaceAll(" ", "").replace("&", "_") || '');
+      });
+
+      category = "Album";
+      total = total.match(/[0-9]+(?!-)/)?.toString() || ""
+      year = +(yearStr.match(/[0-9]+(?!-)/)?.toString() || "")
+      imgName = util.createImgName(title, category, year);
+      info = { title, creator, img, total, tags, domain, imgName, category, year };
+
+    } else if (url.includes("last.fm")) {
+
+      domain = "Last.fm"
+      // TODO
       await page.waitForSelector(".showImage > img:nth-child(1)", { visible: true });
       title = await page.evaluate(() => document.querySelector("h1.albumTitle > span:nth-child(1)")?.textContent?.trim()) || "";
       creator = await page.evaluate(() => document.querySelector(".artist > span:nth-child(1) > span:nth-child(1) > a:nth-child(1)")?.textContent) || "";
