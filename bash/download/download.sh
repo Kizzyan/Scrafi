@@ -62,11 +62,12 @@ if [ -n "$url" ]; then
   if $batch; then
     echo "$albums" | jq -r '.[] | [.name, .url, .year] | @tsv' | while IFS=$'\t' read -r albumName albumUrl albumYear; do
     download "$artist" "$albumName" "$albumYear" "https://music.youtube.com/$albumUrl"
+    notify-send "Downloaded: \"$album\" by $artist"
     sleep 2
   done
-else
-  download "$artist" "$album" "$year" "$url"
+  else
+    download "$artist" "$album" "$year" "$url"
+    notify-send "Downloaded: \"$album\" by $artist"
   fi
 fi
 
-notify-send "All downloads finished!"

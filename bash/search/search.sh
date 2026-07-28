@@ -1,12 +1,12 @@
 #! /bin/sh
 
 path="$HOME/.scrafi/bash/search/"
-selected=$(printf "󰇥\n󰥷\n󰖬\n󰗃\n\n\n󰿏\n󰵻\n\n\n󰀥\n\n\n\n󰬉\n󰒚\n\n" | rofi -dmenu -i -theme-str '@import "'$path'/search_2.rasi"')
+selected=$(printf "\n󰥷\n󰖬\n󰗃\n\n\n󰿏\n󰵻\n\n\n󰀥\n\n\n\n󰬉\n󰒚\n\n" | rofi -dmenu -i -theme-str '@import "'$path'/search_2.rasi"')
 
 case "$selected" in
-"󰇥")
-  search_url="https://duckduckgo.com/?q="
-  icon=" 󰇥 "
+"")
+  search_url="https://www.google.com/search?q="
+  icon="  "
   params=""
   ;;
 "󰥷")

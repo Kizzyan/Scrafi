@@ -20,7 +20,7 @@ if [ -n "$url" ]; then
   category=$(echo "$json" | jq -r '.category')
   year=$(echo "$json" | jq -r '.year')
   cleaned_title=$(echo "$json" | jq -r '.imgName')
-  img_title=$([ -z "$img_url" ] && echo "AO3_logo.png" || echo "${cleaned_title}.jpg")
+  img_title=$([ -z "$img_url" ] && echo "" || echo "${cleaned_title}.jpg")
   comment=$(rofi -dmenu -i -p "󰅺 " -theme-str "$(define_placeholder 'Add a comment')")
   declare -a tags=($(echo "$json" | jq -r '.tags | @sh' | tr -d \'))
 fi
@@ -39,13 +39,7 @@ case "$selected" in
 esac
 
 if $finished; then
-  finished_date=$(rofi -dmenu -i -p " " -theme-str "$(define_placeholder 'Add finish date')")
-  status="Finished"
-  if [ "$finished_date" = "today" ]; then
-    completed=$(date +"%Y-%m-%d")
-  else
-    completed="${finished_date}"
-  fi
+  completed=$($base_path/calendar/calendar.sh)
   current=$total
 else
   status="Not Started"
@@ -83,11 +77,8 @@ done)
 ---
 EOF
 
-case "$img_title" in
-"AO3_logo.png") echo "" ;;
-*)
+if [ -n "$img_title" ] && [ "$img_title" != "AO3_logo.png" ]; then
   cd "$ALX_PATH/Media" || exit
   filename="${img_title%.*}.jpg"
   wget -O "$filename" "${img_url}"
-  ;;
-esac
+fi

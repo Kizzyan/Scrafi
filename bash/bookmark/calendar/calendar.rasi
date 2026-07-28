@@ -1,0 +1,40 @@
+configuration {
+  show-icons: false;
+  kb-row-up: "k";
+  kb-row-down: "j";
+  kb-row-left: "h";
+  kb-row-right: "l";
+}
+
+window {
+    background-color: @background;
+    border:           0;
+    padding:          0;
+    width:            561px;
+    height:           400px;
+    border-radius:    20px;
+}
+
+mainbox {
+  children: [listview];
+}
+
+listview {
+    padding:      0;
+    border-color: @separatorcolor;
+    layout:       horizontal;
+    columns: 7;
+    lines: 7;
+    rows: 7;
+}
+
+element {
+    padding: 8px 0px 8px 20px;
+    width: 80px;
+    border-radius:    0px;
+}
+
+element-text {
+  text-align: center;
+  font: "Maple Mono NF Regular 10";
+}

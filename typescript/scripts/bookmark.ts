@@ -322,22 +322,45 @@ const getInfo = async () => {
     } else if (url.includes("last.fm")) {
 
       domain = "Last.fm"
-      // TODO
-      await page.waitForSelector(".showImage > img:nth-child(1)", { visible: true });
-      title = await page.evaluate(() => document.querySelector("h1.albumTitle > span:nth-child(1)")?.textContent?.trim()) || "";
-      creator = await page.evaluate(() => document.querySelector(".artist > span:nth-child(1) > span:nth-child(1) > a:nth-child(1)")?.textContent) || "";
-      img = await page.evaluate(() => (document.querySelector(".showImage > img:nth-child(1)") as HTMLImageElement)?.src);
-      total = await page.evaluate(() => document.querySelector(".totalLength")?.textContent) || "";
-      let yearStr = await page.evaluate(() => document.querySelector("div.detailRow:nth-child(2) > a:nth-child(2)")?.textContent) || "";
+      await page.waitForSelector(".header-new-background-image", { visible: true });
+      title = await page.evaluate(() => document.querySelector(".header-new-title")?.textContent?.trim()) || "";
+      creator = await page.evaluate(() => document.querySelector(".header-new-crumb > span:nth-child(1)")?.textContent) || "";
+      img = await page.evaluate(() => document.querySelector(".header-new-background-image")?.getAttribute("content")) || "";
+      total = await page.evaluate(() => document.querySelector("div.metadata-column:nth-child(1) > dl:nth-child(1) > dd:nth-child(2)")?.textContent) || "";
+      let yearStr = await page.evaluate(() => document.querySelector("div.metadata-column:nth-child(1) > dl:nth-child(1) > dd:nth-child(4)")?.textContent) || "";
       tags = await page.evaluate(() => {
-        const tagElements = document.querySelectorAll("div.detailRow:nth-child(5) > a");
+        const tagElements = document.querySelectorAll("section.catalogue-tags:nth-child(1) > ul:nth-child(2) > li > a");
         return Array.from(tagElements).map(element => element.textContent?.trim().replaceAll(" ", "").replace("&", "_") || '');
       });
 
       category = "Album";
       total = total.match(/[0-9]+(?!-)/)?.toString() || ""
-      year = +(yearStr.match(/[0-9]+(?!-)/)?.toString() || "")
+      year = +(yearStr.split(" ")[2] || "")
       imgName = util.createImgName(title, category, year);
+      info = { title, creator, img, total, tags, domain, imgName, category, year };
+
+    } else if (url.includes("ycombinator")) {
+      domain = "HackerNews"
+      title = await page.evaluate(() => document.querySelector(".titleline > a:nth-child(1)")?.textContent?.trim()) || "";
+      creator = await page.evaluate(() => document.querySelector(".sitestr")?.textContent) || "";
+      img = "";
+      total = "";
+      year = new Date().getFullYear();
+      tags = [];
+      category = "Article";
+      imgName = "";
+      info = { title, creator, img, total, tags, domain, imgName, category, year };
+
+    } else if (url.includes("lobste.rs")) {
+      domain = "Lobsters"
+      title = await page.evaluate(() => document.querySelector(".u-url")?.textContent?.trim()) || "";
+      creator = await page.evaluate(() => document.querySelector(".domain")?.textContent) || "";
+      img = "";
+      total = "";
+      year = new Date().getFullYear();
+      tags = [];
+      category = "Article";
+      imgName = "";
       info = { title, creator, img, total, tags, domain, imgName, category, year };
 
     }
